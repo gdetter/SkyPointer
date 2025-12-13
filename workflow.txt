@@ -1,0 +1,19 @@
+*Stretch*
+Establish Wifi AP to be able to log into wifi
+
+Get location
+    If unavailable use last known
+
+*Stretch*
+    Home motors
+
+*Stretch*
+    Allow selecting different bodies
+
+
+Loop {
+Using location and time get alt az of ISS
+
+Point to ISS
+}
+
