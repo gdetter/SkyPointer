@@ -20,8 +20,12 @@ verbose = True
 if(verbose):
     print("Getting Latitude and Longitude...")
 
+
 my_lat, my_lon = get_lat_lon()
 
+if(verbose):
+    print(f"Lattitude: {my_lat}")
+    print(f"Longitude: {my_lon}")
 
 # Load Satellite Data
 max_days = 7.0         # download again once 7 days old
