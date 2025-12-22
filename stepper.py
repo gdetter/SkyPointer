@@ -152,12 +152,26 @@ class StepperDriver:
             angle (float): Angle to rotate in degrees
             direction (int): 0 or 1, direction depends on application
         """
-
-        #TODO Make coordinates motion possible, possibly use asyncio?
         self.set_direction(direction)
         steps = angle/(self.DEGREES_PER_STEP*self.step_size)
         delay_time = (steps*self.DEGREES_PER_STEP*self.step_size)/self.speed
 
+        for i in range(steps):
+            time.sleep(delay_time)
+            self.step()
+
+    def rotate_degrees_by_time(self, angle, direction, secs):
+        """Rotate a stepper by a number of degrees over a given time
+
+        Args:
+            angle (float): Angle to rotate in degrees
+            direction (int): 0 or 1, direction depends on application
+            secs (_type_): _description_
+        """
+
+        self.set_direction(direction)
+        steps = angle/(self.DEGREES_PER_STEP*self.step_size)
+        delay_time = secs/steps
         for i in range(steps):
             time.sleep(delay_time)
             self.step()
