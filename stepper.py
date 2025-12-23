@@ -15,7 +15,8 @@ class StepperDriver:
             ms1 (int): Microstep Select 1 Pin
             en (int): Enable Pin
         """
-
+        wiringpi.wiringPiSetup()
+        
         #Set Pin Numbers
         self.dir = dir
         self.stp = stp
