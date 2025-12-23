@@ -12,12 +12,11 @@ PIN37 = 25
 
 
 motor1 = StepperDriver(dir=PIN21, stp=PIN23, slp = PIN27, rst = PIN29, ms3 = PIN31, ms2 = PIN33, ms1 = PIN35, en = PIN37)
-
+motor1.enable_stepper(enabled = True)
+motor1.set_direction(1)
+motor1.set_microstep(16)
 while True:
-    motor1.set_speed(10)
-    motor1.set_direction(0)
-    motor1.rotate_degrees(360)
+    motor1.rotate_degrees(360, 0)
     time.sleep(1)
-    motor1.set_direction(1)
-    motor1.rotate_degrees_by_time(360,15)
+    motor1.rotate_degrees(360, 1)
     time.sleep(1)

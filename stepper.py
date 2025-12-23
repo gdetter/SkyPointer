@@ -1,8 +1,9 @@
-from wiringOP-Python import wiringpi
+import wiringpi
 import time
-from wiringOP-Python.wiringpi import GPIO
+from wiringpi import GPIO
 
 class StepperDriver:
+    
     def __init__(self, dir, stp, slp, rst, ms3, ms2, ms1, en):
         """Initialize the stepper with the provided pins
         Args:
@@ -48,13 +49,16 @@ class StepperDriver:
         wiringpi.digitalWrite(self.stp, GPIO.LOW)
 
         self.DEGREES_PER_STEP = 1.8
-        self.speed = 1      #Degreees per second
+        self._speed = 100      #Degreees per second
 
     @property
     def speed(self):
-        return(self.speed)
-    
-    
+        return(self._speed)
+
+    @speed.setter
+    def speed(self, value):
+        self._speed = value
+
     def set_microstep(self, step_size):
         """Set mirco-stepping level
 
@@ -144,7 +148,7 @@ class StepperDriver:
         time.sleep(1/1000000.0)
 
     def set_speed(self, speed):
-        self.speed = speed
+        self._speed = speed
 
     def rotate_degrees(self, angle, direction):
         """Rotates a stepper by a certain angle
@@ -154,10 +158,10 @@ class StepperDriver:
             direction (int): 0 or 1, direction depends on application
         """
         self.set_direction(direction)
-        steps = angle/(self.DEGREES_PER_STEP*self.step_size)
-        delay_time = (steps*self.DEGREES_PER_STEP*self.step_size)/self.speed
+        steps = angle/(self.DEGREES_PER_STEP/self.step_size)
+        delay_time = 1/(self._speed/(self.DEGREES_PER_STEP/self.step_size))
 
-        for i in range(steps):
+        for i in range(int(steps)):
             time.sleep(delay_time)
             self.step()
 
