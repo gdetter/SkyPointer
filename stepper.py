@@ -1,6 +1,6 @@
-import wiringpi
+from wiringOP-Python import wiringpi
 import time
-from wiringpi import GPIO
+from wiringOP-Python.wiringpi import GPIO
 
 class StepperDriver:
     def __init__(self, dir, stp, slp, rst, ms3, ms2, ms1, en):
