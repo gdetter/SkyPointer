@@ -38,107 +38,136 @@ class StepperDriver:
         wiringpi.pinMode(self.ms1, GPIO.OUTPUT)
         wiringpi.pinMode(self.en, GPIO.OUTPUT)
 
-        #Initialization Functions
-        self.sleep_mode(sleepy = False)
-        self.enable_stepper(enabled = False)
-        self.set_microstep(step_size=1)
-        self.set_direction(0)
-
         #Initialize Remaining Pins
         wiringpi.digitalWrite(self.rst, GPIO.HIGH)
         wiringpi.digitalWrite(self.stp, GPIO.LOW)
 
+        #Initialize Properties
         self.DEGREES_PER_STEP = 1.8
-        self._speed = 100      #Degreees per second
+        self._reversed = False
+        self._sleeping = False
+        self._microstep = 1     #No microstepping
+        self._speed = 100       #Degreees per second
+        self._ratio = 1         #Mechanical ratio (_ratio:1)   
+        self._enabled = False   #Disable the stepper
 
     @property
     def speed(self):
+        """Get and set the speed of the stepper. Speed is in degrees per second.
+        """
         return(self._speed)
 
     @speed.setter
     def speed(self, value):
         self._speed = value
 
-    def set_microstep(self, step_size):
-        """Set mirco-stepping level
-
-        Args:
-            step_size (int): Can be 1 (none), 2 (half),  4 (quarter), 8 (eigth), 16 (sixteenth)
+    @property
+    def ratio(self):
+        """Get and set the ratio of the stepper. This effectively changes the steps per rotation.
         """
+        return(self._advantage)
+    
+    @ratio.setter
+    def ratio(self, value):
+        self._ratio = value
 
-        self.step_size = step_size
-        
-        if (self.step_size == 1):
+    @property
+    def microstep(self):
+        """Get and set the microstepping level.
+
+        Returns:
+            int: Can be 1 (none), 2 (half),  4 (quarter), 8 (eigth), 16 (sixteenth)
+        """
+        return self._microstep
+    
+    @microstep.setter
+    def microstep(self, value):
+        self._microstep = value
+        if (self.value == 1):
             wiringpi.digitalWrite(self.ms1, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
         
-        elif (self.step_size == 2):
+        elif (self.value == 2):
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
 
-        elif (self.step_size == 4):
+        elif (self.value == 4):
             wiringpi.digitalWrite(self.ms1, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
 
-        elif (self.step_size == 8):
+        elif (self.value == 8):
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
 
-        elif (self.step_size == 16):
+        elif (self.value == 16):
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
 
         else:
             #Default to no micro-stepping
+            self._microstep = 1
             wiringpi.digitalWrite(self.ms1, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
 
-    def sleep_mode(self, sleepy):
-        """Tucks stepper in for a nap
+    @property
+    def enabled(self):
+        """Set to True to enable and False to disable.
 
-        Args:
-            sleepy (bool): If true, sleeps the driver, if false, wakes up driver
+        Returns:
+            bool: True if enabled, false if disabled
         """
-        self.sleepy = sleepy
+        return self._enabled()
+    
+    @enabled.setter
+    def enabled(self, value):
+        self._enabled = value
+        if self._enabled:
+            wiringpi.digitalWrite(self.en, GPIO.LOW)
+        else:
+            wiringpi.digitalWrite(self.en, GPIO.HIGH)
 
-        if sleepy:
+    
+    @property
+    def sleeping(self):
+        """Tucks stepper in for a nap if true, wakes up if false.
+
+        Returns:
+            bool: True if sleeping, False if awake
+        """
+        return self._sleeping
+    
+    @sleeping.setter
+    def sleeping(self, value):
+        self._sleeping = value
+        if self._sleeping:
             wiringpi.digitalWrite(self.slp, GPIO.LOW)
         else:
             wiringpi.digitalWrite(self.slp, GPIO.HIGH)
             time.sleep(1/1000.0)  #Wait for driver to wake up
 
-    def enable_stepper(self, enabled):
-        """Enables or disables the stepper.
+    @property
+    def reversed(self):
+        """Reversed direction of stepper if set to True
 
-        Args:
-            enabled (bool): Enable stepper if True, disable stepper if False
+        Returns:
+            bool: True if reversed, false if not
         """
-        self.enabled = enabled
-
-        if enabled:
-            wiringpi.digitalWrite(self.en, GPIO.LOW)
-        else:
-            wiringpi.digitalWrite(self.en, GPIO.HIGH)
-
-    def set_direction(self, direction):
-        """Set the direction of the stepper
-
-        Args:
-            direction (int): 0 or 1, direction depends on application
-        """
-        self.direction = direction
-
-        if self.direction == 0:
+        return self._reversed
+    
+    @reversed.setter
+    def reversed(self, value):
+        self._reversed = value
+        if not self._reversed:
             wiringpi.digitalWrite(self.dir, GPIO.LOW)
-        elif self.direction == 1:
+        else:
             wiringpi.digitalWrite(self.dir, GPIO.HIGH)
-
+   
     def step(self):
         """Performs one step, waiting minimum time between, likely not accurate timing
         """
@@ -147,39 +176,49 @@ class StepperDriver:
         wiringpi.digitalWrite(self.stp, GPIO.LOW)
         time.sleep(1/1000000.0)
 
-    def set_speed(self, speed):
-        self._speed = speed
-
-    def rotate_degrees(self, angle, direction):
+    def rotate_degrees(self, angle):
         """Rotates a stepper by a certain angle
 
         Args:
             angle (float): Angle to rotate in degrees
-            direction (int): 0 or 1, direction depends on application
         """
-        self.set_direction(direction)
-        steps = angle/(self.DEGREES_PER_STEP/self.step_size)
-        delay_time = 1/(self._speed/(self.DEGREES_PER_STEP/self.step_size))
+        steps = angle*self._ratio*self._microstep/self.DEGREES_PER_STEP
+        delay_time = self.DEGREES_PER_STEP*self._microstep/self._speed/self._ratio
 
+        #Toggle direction if needed
+        if angle < 0:
+            self._reversed = not self._reversed
+
+        #Perform the motion
         for i in range(int(steps)):
             time.sleep(delay_time)
             self.step()
 
-    def rotate_degrees_by_time(self, angle, direction, secs):
+        #Toggle direction back if needed
+        if angle < 0:
+            self._reversed = not self._reversed
+
+    def rotate_degrees_by_time(self, angle, secs):
         """Rotate a stepper by a number of degrees over a given time
 
         Args:
             angle (float): Angle to rotate in degrees
-            direction (int): 0 or 1, direction depends on application
-            secs (_type_): _description_
+            secs (float): Time to perform rotation over
         """
+        #Toggle direction if needed
+        if angle < 0:
+            self._reversed = not self._reversed
 
-        self.set_direction(direction)
-        steps = angle/(self.DEGREES_PER_STEP*self.step_size)
+        #Perform the motion
+        steps = angle*self._ratio*self._microstep/self.DEGREES_PER_STEP
         delay_time = secs/steps
         for i in range(steps):
             time.sleep(delay_time)
             self.step()
+
+        #Toggle direction back if needed
+        if angle < 0:
+            self._reversed = not self._reversed
 
 
 
