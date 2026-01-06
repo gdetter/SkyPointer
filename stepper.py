@@ -122,9 +122,9 @@ class StepperDriver:
         self.enabled = enabled
 
         if enabled:
-            wiringpi.digitalWrite(self.en, GPIO.HIGH)
-        else:
             wiringpi.digitalWrite(self.en, GPIO.LOW)
+        else:
+            wiringpi.digitalWrite(self.en, GPIO.HIGH)
 
     def set_direction(self, direction):
         """Set the direction of the stepper
