@@ -182,14 +182,14 @@ class StepperDriver:
         Args:
             angle (float): Angle to rotate in degrees
         """
-        steps = angle*self._ratio*self._microstep/self.DEGREES_PER_STEP
+        steps = angle*self.ratio*self._microstep/self.DEGREES_PER_STEP
         print(f'Steps: {steps}')
-        delay_time = self.DEGREES_PER_STEP/self._microstep/self._speed/self._ratio
+        delay_time = self.DEGREES_PER_STEP/self.microstep/self.speed/self.ratio
         print(f'Delay Time: {delay_time}')
 
         #Toggle direction if needed
         if angle < 0:
-            self._reversed = not self._reversed
+            self.reversed = not self.reversed
 
         #Perform the motion
         for i in range(int(steps)):
@@ -199,7 +199,7 @@ class StepperDriver:
 
         #Toggle direction back if needed
         if angle < 0:
-            self._reversed = not self._reversed
+            self.reversed = not self.reversed
 
     def rotate_degrees_by_time(self, angle, secs):
         """Rotate a stepper by a number of degrees over a given time
@@ -210,10 +210,10 @@ class StepperDriver:
         """
         #Toggle direction if needed
         if angle < 0:
-            self._reversed = not self._reversed
+            self.reversed = not self.reversed
 
         #Perform the motion
-        steps = angle*self._ratio*self._microstep/self.DEGREES_PER_STEP
+        steps = angle*self.ratio*self.microstep/self.DEGREES_PER_STEP
         delay_time = secs/steps
         for i in range(int(steps)):
             time.sleep(delay_time)
@@ -221,7 +221,7 @@ class StepperDriver:
 
         #Toggle direction back if needed
         if angle < 0:
-            self._reversed = not self._reversed
+            self.reversed = not self.reversed
 
 
 

@@ -27,7 +27,7 @@ motor1 = StepperDriver(dir=PIN27, stp=PIN29, slp = PIN31, rst = PIN33, ms3 = PIN
 # motor2 = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, ms2=PIN38, ms1=PIN40, en=PIN32)
 
 #Configure Steppers
-# motor1.ratio = 12
+motor1.ratio = 12
 motor1.microstep = 16
 print(motor1.microstep)
 # motor2.ratio = 3.6
