@@ -1,6 +1,8 @@
 from stepper import StepperDriver
 import time
+import threading
 
+# Pin Definitions
 PIN19 = 11
 PIN21 = 12
 PIN23 = 14
@@ -20,18 +22,32 @@ PIN38 = 26
 PIN40 = 27
 
 
+#Connect to Steppers
 motor1 = StepperDriver(dir=PIN27, stp=PIN29, slp = PIN31, rst = PIN33, ms3 = PIN19, ms2 = PIN21, ms1 = PIN23, en = PIN35)
 motor2 = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, ms2=PIN38, ms1=PIN40, en=PIN32)
-motor1.enable_stepper(enabled = True)
-motor2.enable_stepper(enabled = True)
-motor1.set_direction(1)
-motor2.set_direction(1)
-motor1.set_microstep(16)
-motor2.set_microstep(16)
+
+#Configure Steppers
+motor1.ratio = 12
+motor1.microstep = 16
+motor2.ratio = 3.6
+motor2.microstep = 16
+
+#Enable Steppers
+motor1.enabled = True
+motor2.enabled = True
+
 while True:
-    motor1.rotate_degrees(360, 0)
-    motor2.rotate_degrees(360, 0)
+    t1 = threading.Thread(target=motor1.rotate_degrees_by_time, kwargs={'angle':360, 'secs':10})
+    t2 = threading.Thread(target=motor2.rotate_degrees_by_time, kwargs={'angle':360, 'secs':10})
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
     time.sleep(1)
-    motor1.rotate_degrees(360, 1)
-    motor2.rotate_degrees(360, 1)
+    t1 = threading.Thread(target=motor1.rotate_degrees_by_time, kwargs={'angle':-360, 'secs':10})
+    t2 = threading.Thread(target=motor2.rotate_degrees_by_time, kwargs={'angle':-360, 'secs':10})
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
     time.sleep(1)
