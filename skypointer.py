@@ -36,6 +36,7 @@ motor2 = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, ms
 motor1.ratio = 12
 motor1.microstep = 16
 motor1.speed = 10
+motor1.reversed = True
 motor2.ratio = 3.6
 motor2.microstep = 16
 motor1.speed = 10
