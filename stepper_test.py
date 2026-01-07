@@ -24,19 +24,19 @@ PIN40 = 27
 
 #Connect to Steppers
 motor1 = StepperDriver(dir=PIN27, stp=PIN29, slp = PIN31, rst = PIN33, ms3 = PIN19, ms2 = PIN21, ms1 = PIN23, en = PIN35)
-motor2 = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, ms2=PIN38, ms1=PIN40, en=PIN32)
+# motor2 = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, ms2=PIN38, ms1=PIN40, en=PIN32)
 
 #Configure Steppers
 # motor1.ratio = 12
-motor1.microstep = 16
+motor1.microstep = 2
 print(motor1.microstep)
 # motor2.ratio = 3.6
-motor2.microstep = 16
+# motor2.microstep = 16
 
 #Enable Steppers
 motor1.enabled = True
 print(motor1.enabled)
-motor2.enabled = True
+# motor2.enabled = True
 
 while True:
     print("A")

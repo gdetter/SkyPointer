@@ -183,6 +183,7 @@ class StepperDriver:
             angle (float): Angle to rotate in degrees
         """
         steps = angle*self._ratio*self._microstep/self.DEGREES_PER_STEP
+        print(f'Steps: {steps}')
         delay_time = self.DEGREES_PER_STEP*self._microstep/self._speed/self._ratio
         print(f'Delay Time: {delay_time}')
 
