@@ -44,12 +44,12 @@ class StepperDriver:
 
         #Initialize Properties
         self.DEGREES_PER_STEP = 1.8
-        self._reversed = False
-        self._sleeping = False
-        self._microstep = 1     #No microstepping
-        self._speed = 100       #Degreees per second
-        self._ratio = 1         #Mechanical ratio (_ratio:1)   
-        self._enabled = False   #Disable the stepper
+        self.reversed = False
+        self.sleeping = False
+        self.microstep = 1     #No microstepping
+        self.speed = 100       #Degreees per second
+        self.ratio = 1         #Mechanical ratio (_ratio:1)   
+        self.enabled = False   #Disable the stepper
 
     @property
     def speed(self):
