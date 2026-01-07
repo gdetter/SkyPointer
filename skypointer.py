@@ -29,17 +29,17 @@ PIN38 = 26
 PIN40 = 27
 
 #Connect to Steppers
-motor1 = StepperDriver(dir=PIN27, stp=PIN29, slp = PIN31, rst = PIN33, ms3 = PIN19, ms2 = PIN21, ms1 = PIN23, en = PIN35)
-motor2 = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, ms2=PIN38, ms1=PIN40, en=PIN32)
+alt_motor = StepperDriver(dir=PIN27, stp=PIN29, slp = PIN31, rst = PIN33, ms3 = PIN19, ms2 = PIN21, ms1 = PIN23, en = PIN35)
+az_motor = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, ms2=PIN38, ms1=PIN40, en=PIN32)
 
 #Configure Steppers
-motor1.ratio = 12
-motor1.microstep = 16
-motor1.speed = 10
-motor1.reversed = True
+alt_motor.ratio = 12
+alt_motor.microstep = 16
+alt_motor.speed = 10
+alt_motor.reversed = True
 motor2.ratio = 3.6
 motor2.microstep = 16
-motor1.speed = 10
+motor2.speed = 10
 
 #Initialize current position
 current_alt = -90
@@ -81,8 +81,8 @@ planets = load('de421.bsp')
 earth, mars = planets['earth'], planets['JUPITER BARYCENTER']
 me = earth + wgs84.latlon(my_lat * N, my_lon * E)
 #Enable Steppers
-motor1.enabled = True
-motor2.enabled = True
+alt_motor.enabled = True
+az_motor.enabled = True
 while True:
     # What's the position of Mars, viewed from Earth?
     t = ts.now()
@@ -91,7 +91,16 @@ while True:
     print(f'Target Altitude: {target_alt.degrees}')
     print(f'Target Azimuth: {target_az.degrees}')
     alt_delta = target_alt.degrees-current_alt
-    motor1.rotate_degrees(angle=alt_delta)
+    az_delta = target_az.degrees-current_az
+
+    alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
+    az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
+    alt_thread.start()
+    az_thread.start()
+    alt_thread.join()
+    az_thread.join()
+ 
     current_alt = current_alt + alt_delta
+    current_az = current_az + az_delta
     time.sleep(1)
     
