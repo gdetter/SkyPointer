@@ -83,27 +83,27 @@ class StepperDriver:
     @microstep.setter
     def microstep(self, value):
         self._microstep = value
-        if (self.value == 1):
+        if (value == 1):
             wiringpi.digitalWrite(self.ms1, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
         
-        elif (self.value == 2):
+        elif (value == 2):
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
 
-        elif (self.value == 4):
+        elif (value == 4):
             wiringpi.digitalWrite(self.ms1, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
 
-        elif (self.value == 8):
+        elif (value == 8):
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
 
-        elif (self.value == 16):
+        elif (value == 16):
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
