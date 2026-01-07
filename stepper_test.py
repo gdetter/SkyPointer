@@ -38,15 +38,15 @@ motor1.enabled = True
 motor2.enabled = True
 
 while True:
-    t1 = threading.Thread(target=motor1.rotate_degrees, kwargs={'angle':360})
-    t2 = threading.Thread(target=motor2.rotate_degrees, kwargs={'angle':360})
+    t1 = threading.Thread(target=motor1.rotate_degrees_by_time, kwargs={'angle':360, 'secs':3})
+    t2 = threading.Thread(target=motor2.rotate_degrees_by_time, kwargs={'angle':360, 'secs':3})
     t1.start()
     t2.start()
     t1.join()
     t2.join()
     time.sleep(1)
-    t1 = threading.Thread(target=motor1.rotate_degrees, kwargs={'angle':-360})
-    t2 = threading.Thread(target=motor2.rotate_degrees, kwargs={'angle':-360})
+    t1 = threading.Thread(target=motor1.rotate_degrees_by_time, kwargs={'angle':-360, 'secs':6})
+    t2 = threading.Thread(target=motor2.rotate_degrees_by_time, kwargs={'angle':-360, 'secs':6})
     t1.start()
     t2.start()
     t1.join()

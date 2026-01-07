@@ -211,7 +211,7 @@ class StepperDriver:
             self.reversed = not self.reversed
 
         #Perform the motion
-        steps = angle*self.ratio*self.microstep/self.DEGREES_PER_STEP
+        steps = abs(angle*self.ratio*self.microstep/self.DEGREES_PER_STEP)
         delay_time = secs/steps
         for i in range(int(steps)):
             time.sleep(delay_time)
