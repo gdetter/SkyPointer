@@ -28,7 +28,7 @@ motor2 = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, ms
 
 #Configure Steppers
 motor1.ratio = 12
-motor1.microstep = 4
+motor1.microstep = 16
 motor1.speed = 100
 motor2.ratio = 3.6
 motor2.microstep = 16
@@ -38,15 +38,15 @@ motor1.enabled = True
 motor2.enabled = True
 
 while True:
-    t1 = threading.Thread(target=motor1.rotate_degrees_by_time, kwargs={'angle':360, 'secs':60})
-    t2 = threading.Thread(target=motor2.rotate_degrees_by_time, kwargs={'angle':360, 'secs':60})
+    t1 = threading.Thread(target=motor1.rotate_degrees_by_time, kwargs={'angle':360, 'secs':120})
+    t2 = threading.Thread(target=motor2.rotate_degrees_by_time, kwargs={'angle':360, 'secs':120})
     t1.start()
     t2.start()
     t1.join()
     t2.join()
     time.sleep(1)
-    t1 = threading.Thread(target=motor1.rotate_degrees_by_time, kwargs={'angle':-360, 'secs':120})
-    t2 = threading.Thread(target=motor2.rotate_degrees_by_time, kwargs={'angle':-360, 'secs':120})
+    t1 = threading.Thread(target=motor1.rotate_degrees_by_time, kwargs={'angle':-360, 'secs':3600})
+    t2 = threading.Thread(target=motor2.rotate_degrees_by_time, kwargs={'angle':-360, 'secs':3600})
     t1.start()
     t2.start()
     t1.join()
