@@ -47,7 +47,7 @@ print('Loaded', len(sats), 'satellites')
 
 print("Loading JPL Ephemeris DE421...")
 planets = load('de421.bsp')
-earth, mars = planets['earth'], planets['mars']
+earth, mars = planets['earth'], planets['SATURN BARYCENTER']
 
 while True:
     # What's the position of Mars, viewed from Earth?

@@ -78,7 +78,7 @@ print('Loaded', len(sats), 'satellites')
 
 print("Loading JPL Ephemeris DE421...")
 planets = load('de421.bsp')
-earth, mars = planets['earth'], planets['mars']
+earth, mars = planets['earth'], planets['SATURN BARYCENTER']
 me = earth + wgs84.latlon(my_lat * N, my_lon * E)
 #Enable Steppers
 motor1.enabled = True
