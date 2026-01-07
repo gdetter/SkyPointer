@@ -40,6 +40,7 @@ alt_motor.reversed = True
 az_motor.ratio = 3.6
 az_motor.microstep = 16
 az_motor.speed = 10
+alt_motor.reversed = True
 
 #Initialize current position
 current_alt = -90
