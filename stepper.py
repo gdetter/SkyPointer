@@ -128,9 +128,9 @@ class StepperDriver:
     def enabled(self, value):
         self._enabled = value
         if self._enabled:
-            wiringpi.digitalWrite(self.en, GPIO.LOW)
-        else:
             wiringpi.digitalWrite(self.en, GPIO.HIGH)
+        else:
+            wiringpi.digitalWrite(self.en, GPIO.LOW)
 
     
     @property
