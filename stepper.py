@@ -212,7 +212,7 @@ class StepperDriver:
         #Perform the motion
         steps = angle*self._ratio*self._microstep/self.DEGREES_PER_STEP
         delay_time = secs/steps
-        for i in range(steps):
+        for i in range(int(steps)):
             time.sleep(delay_time)
             self.step()
 
