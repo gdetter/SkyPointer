@@ -37,9 +37,9 @@ alt_motor.ratio = 12
 alt_motor.microstep = 16
 alt_motor.speed = 10
 alt_motor.reversed = True
-motor2.ratio = 3.6
-motor2.microstep = 16
-motor2.speed = 10
+az_motor.ratio = 3.6
+az_motor.microstep = 16
+az_motor.speed = 10
 
 #Initialize current position
 current_alt = -90
