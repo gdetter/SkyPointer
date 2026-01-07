@@ -29,7 +29,7 @@ motor1 = StepperDriver(dir=PIN27, stp=PIN29, slp = PIN31, rst = PIN33, ms3 = PIN
 #Configure Steppers
 motor1.ratio = 12
 motor1.microstep = 16
-motor1.speed = 50
+motor1.speed = 100
 # motor2.ratio = 3.6
 # motor2.microstep = 16
 
