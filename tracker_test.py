@@ -55,5 +55,6 @@ while True:
     me = earth + wgs84.latlon(my_lat * N, my_lon * E)
     astrometric = me.at(t).observe(mars)
     alt, az, d = astrometric.apparent().altaz()
-    print(f'Target alt: {alt.degrees}')
+    print(f'Target alt: {float(alt.degrees)}')
     print(f'Target az: {az.degrees}')
+    time.sleep(2)

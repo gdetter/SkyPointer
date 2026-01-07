@@ -89,7 +89,8 @@ while True:
     target_alt, target_az, d = astrometric.apparent().altaz()
     print(f'Target Altitude: {target_alt.degrees}')
     print(f'Target Azimuth: {target_az.degrees}')
-    alt_delta = target_alt-current_alt
+    alt_delta = float(target_alt)-current_alt
     motor1.rotate_degrees(angle=alt_delta)
+    current_alt = current_alt + alt_delta
     time.sleep(1)
     
