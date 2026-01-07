@@ -87,31 +87,31 @@ class StepperDriver:
             print("Micro 1")
             wiringpi.digitalWrite(self.ms1, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
-            wiringpi.digitalWrite(self.ms2, GPIO.LOW)
+            wiringpi.digitalWrite(self.ms3, GPIO.LOW)
         
         elif (value == 2):
             print("Micro 2")
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
-            wiringpi.digitalWrite(self.ms2, GPIO.LOW)
+            wiringpi.digitalWrite(self.ms3, GPIO.LOW)
 
         elif (value == 4):
             print("Micro 4")
             wiringpi.digitalWrite(self.ms1, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
-            wiringpi.digitalWrite(self.ms2, GPIO.LOW)
+            wiringpi.digitalWrite(self.ms3, GPIO.LOW)
 
         elif (value == 8):
             print("Micro 8")
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
-            wiringpi.digitalWrite(self.ms2, GPIO.LOW)
+            wiringpi.digitalWrite(self.ms3, GPIO.LOW)
 
         elif (value == 16):
             print("Micro 16")
             wiringpi.digitalWrite(self.ms1, GPIO.HIGH)
             wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
-            wiringpi.digitalWrite(self.ms2, GPIO.HIGH)
+            wiringpi.digitalWrite(self.ms3, GPIO.HIGH)
 
         else:
             #Default to no micro-stepping
@@ -119,7 +119,7 @@ class StepperDriver:
             print("Micro Fail")
             wiringpi.digitalWrite(self.ms1, GPIO.LOW)
             wiringpi.digitalWrite(self.ms2, GPIO.LOW)
-            wiringpi.digitalWrite(self.ms2, GPIO.LOW)
+            wiringpi.digitalWrite(self.ms3, GPIO.LOW)
 
     @property
     def enabled(self):
