@@ -65,7 +65,7 @@ class StepperDriver:
     def ratio(self):
         """Get and set the ratio of the stepper. This effectively changes the steps per rotation.
         """
-        return(self._advantage)
+        return(self._ratio)
     
     @ratio.setter
     def ratio(self, value):
@@ -122,7 +122,7 @@ class StepperDriver:
         Returns:
             bool: True if enabled, false if disabled
         """
-        return self._enabled()
+        return self._enabled
     
     @enabled.setter
     def enabled(self, value):
