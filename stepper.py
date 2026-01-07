@@ -184,7 +184,7 @@ class StepperDriver:
         """
         steps = angle*self._ratio*self._microstep/self.DEGREES_PER_STEP
         print(f'Steps: {steps}')
-        delay_time = self.DEGREES_PER_STEP*self._microstep/self._speed/self._ratio
+        delay_time = self.DEGREES_PER_STEP/self._microstep/self._speed/self._ratio
         print(f'Delay Time: {delay_time}')
 
         #Toggle direction if needed
@@ -195,7 +195,7 @@ class StepperDriver:
         for i in range(int(steps)):
             time.sleep(delay_time)
             self.step()
-            print("step")
+            
 
         #Toggle direction back if needed
         if angle < 0:
