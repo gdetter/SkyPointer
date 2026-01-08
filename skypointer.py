@@ -92,18 +92,18 @@ def button_callback():
     if  not button_pressed:
         print('Button Pressed')
         button_pressed = True
-        time.sleep(0.1)
+        time.sleep(0.5)
         button_start = time.perf_counter_ns()
     else:
         print('Button Released')
         now = time.perf_counter_ns()
-        time.sleep(0.1)
+        time.sleep(0.5)
         delta = now - button_start
         if delta > 10000000000:
             print('Long Press')
             current_state = state.POWERING_DOWN
         elif delta > 3000000000:
-            print('Long Press')
+            print('Short Press')
         button_pressed = False
 
 def power_down():
