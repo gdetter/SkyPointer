@@ -16,6 +16,7 @@ class state(Enum):
     DISABLED = auto()
     STARTING = auto()
     TRACKING = auto()
+    STOPPING = auto()
     POWERING_DOWN = auto()
 
 # Pin Definitions
@@ -104,6 +105,12 @@ def button_callback():
             current_state = state.POWERING_DOWN
         elif delta > 3000000000:
             print('Short Press')
+            if current_state == state.DISABLED:
+                print('Starting...')
+                current_state == state.STARTING
+            elif current_state == state.TRACKING:
+                print('Stopping...')
+                current_state == state.STOPPING
         button_pressed = False
 
 def power_down():
@@ -113,6 +120,7 @@ def initialize():
     global iss
     global me
     global current_state
+    global ts
     print('Initializing...')
 
     #Configure Button
@@ -138,6 +146,53 @@ def initialize():
     print('Waiting...')
     current_state = state.DISABLED
 
+def start_tracking():
+    global iss
+    global me
+    global current_alt
+    global current_az
+    global current_state
+
+    alt_motor.enabled = True
+    az_motor.enabled = True
+    t = ts.now()
+    difference = iss - me
+    topocentric = difference.at(t)
+    target_alt, target_az, target_distance = topocentric.altaz()
+    alt_delta = target_alt.degrees-current_alt
+    az_delta = target_az.degrees-current_az
+
+    alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
+    az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
+    alt_thread.start()
+    az_thread.start()
+    alt_thread.join()
+    az_thread.join()
+    current_alt = target_alt
+    current_az = target_az
+    current_state = state.TRACKING
+    
+def stop_tracking():
+    global current_alt
+    global current_az
+    global current_state
+    target_alt = -90
+    target_az = 0
+    alt_delta = target_alt.degrees-current_alt
+    az_delta = target_az.degrees-current_az
+    alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
+    az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
+    alt_thread.start()
+    az_thread.start()
+    alt_thread.join()
+    az_thread.join()
+    current_alt = target_alt
+    current_az = target_az
+    alt_motor.enabled = False
+    az_motor.enabled = False
+    current_state = state.DISABLED
+
+
 while True:
     match current_state:
         case state.INITIALIZING:
@@ -147,7 +202,9 @@ while True:
             az_motor.enabled = False
             # print('Disabled')
         case state.STARTING:
-            pass
+            start_tracking()
+        case state.STOPPING:
+            stop_tracking()
         case state.TRACKING:
             pass
         case state.POWERING_DOWN:
