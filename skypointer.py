@@ -47,12 +47,14 @@ az_motor = StepperDriver(dir=PIN22, stp=PIN24, slp=PIN26, rst=PIN28, ms3=PIN36, 
 #Configure Steppers
 alt_motor.ratio = 12
 alt_motor.microstep = 16
-alt_motor.speed = 10
+alt_motor.speed = 20
 alt_motor.reversed = True
 az_motor.ratio = 3.6
 az_motor.microstep = 16
-az_motor.speed = 10
+az_motor.speed = 20
 alt_motor.reversed = True
+alt_motor.enabled = False
+az_motor.enabled = False
 
 #Initialize Current Angles
 current_alt = -90
@@ -172,14 +174,35 @@ def start_tracking():
     current_az = target_az
     current_state = state.TRACKING
 
+def tracking():
+    global iss
+    global me
+    global current_alt
+    global current_az
+    t = ts.now()
+    difference = iss - me
+    topocentric = difference.at(t)
+    target_alt, target_az, target_distance = topocentric.altaz()
+    alt_delta = target_alt.degrees-current_alt
+    az_delta = target_az.degrees-current_az
+
+    alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
+    az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
+    alt_thread.start()
+    az_thread.start()
+    alt_thread.join()
+    az_thread.join()
+    current_alt = target_alt
+    current_az = target_az
+
 def stop_tracking():
     global current_alt
     global current_az
     global current_state
     target_alt = -90
     target_az = 0
-    alt_delta = target_alt.degrees-current_alt
-    az_delta = target_az.degrees-current_az
+    alt_delta = target_alt-current_alt
+    az_delta = target_az-current_az
     alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
     az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
     alt_thread.start()
@@ -198,15 +221,13 @@ while True:
         case state.INITIALIZING:
             initialize()
         case state.DISABLED:
-            alt_motor.enabled = False
-            az_motor.enabled = False
-            # print('Disabled')
+            pass
         case state.STARTING:
             start_tracking()
         case state.STOPPING:
             stop_tracking()
         case state.TRACKING:
-            pass
+            tracking()
         case state.POWERING_DOWN:
             power_down()
 
