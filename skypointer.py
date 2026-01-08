@@ -89,11 +89,13 @@ def button_pressed_callback():
 
 def button_released_callback():
     print('Button Released')
-    now = time.perf_counter_ns
-    delta = now-button_start
-    if delta > 10000000000:
-        print('Long Press')
-        current_state = state.POWERING_DOWN
+    if button_start is not None:
+        now = time.perf_counter_ns
+        delta = now-button_start
+        if delta > 10000000000:
+            print('Long Press')
+            current_state = state.POWERING_DOWN
+    button_start = None
 
 def power_down():
     os.system('systemctl poweroff') 
