@@ -105,7 +105,7 @@ def button_callback():
         if delta > 10000000000:
             print('Long Press')
             current_state = state.POWERING_DOWN
-        elif delta > 3000000000:
+        elif delta > 2000000000:
             print('Short Press')
             if current_state == state.DISABLED:
                 print('Starting...')
@@ -117,6 +117,19 @@ def button_callback():
         button_pressed = False
 
 def power_down():
+
+    alt_motor.enabled = True
+    az_motor.enabled = True
+    alt_motor.microstep = 1
+    az_motor.microstep = 1
+    alt_motor.step()
+    az_motor.step()
+    time.sleep(0.25)
+    alt_motor.step()
+    az_motor.step()
+    time.sleep(0.25)
+    alt_motor.step()
+    az_motor.step()
     os.system('systemctl poweroff') 
 
 def initialize():
