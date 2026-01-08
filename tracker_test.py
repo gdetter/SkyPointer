@@ -42,7 +42,8 @@ with load.open('stations.csv', mode='r') as f:
 
 sats = [EarthSatellite.from_omm(ts, fields) for fields in data]
 print('Loaded', len(sats), 'satellites')
-
+by_name = {sat.name: sat for sat in sats}
+iss = by_name['ISS (ZARYA)']
 # Load the JPL ephemeris DE421 (covers 1900-2050).
 
 print("Loading JPL Ephemeris DE421...")
@@ -52,9 +53,12 @@ earth, mars = planets['earth'], planets['SATURN BARYCENTER']
 while True:
     # What's the position of Mars, viewed from Earth?
     t = ts.now()
-    me = earth + wgs84.latlon(my_lat * N, my_lon * E)
-    astrometric = me.at(t).observe(mars)
-    alt, az, d = astrometric.apparent().altaz()
+    me = wgs84.latlon(my_lat * N, my_lon * E)
+    difference = iss - me
+    topocentric = difference.at(t)
+    alt, az, target_distance = topocentric.altaz()
+    # astrometric = me.at(t).observe(mars)
+    # alt, az, d = astrometric.apparent().altaz()
     print(f'Target alt: {float(alt.degrees)}')
     print(f'Target az: {az.degrees}')
     time.sleep(2)
