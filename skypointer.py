@@ -97,7 +97,7 @@ def button_callback():
         button_pressed = True
         time.sleep(0.5)
         button_start = time.perf_counter_ns()
-    else:
+    elif button_start is not None:
         print('Button Released')
         now = time.perf_counter_ns()
         time.sleep(0.5)
