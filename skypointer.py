@@ -87,31 +87,22 @@ def download_sats():
 def button_callback():
     global button_pressed
     global button_start
+    global current_state
 
-    if not button_pressed:
+    if  not button_pressed:
         print('Button Pressed')
         button_pressed = True
+        time.sleep(0.01)
         button_start = time.perf_counter_ns
     else:
         print('Button Released')
         now = time.perf_counter_ns
+        time.sleep(0.01)
         delta = now-button_start
         if delta > 10000000000:
             print('Long Press')
             current_state = state.POWERING_DOWN
         button_pressed = False
-
-def button_released_callback():
-    print('Button Released')
-    global button_start
-    global current_state
-    if button_start is not None:
-        now = time.perf_counter_ns
-        delta = now-button_start
-        if delta > 10000000000:
-            print('Long Press')
-            current_state = state.POWERING_DOWN
-    button_start = None
 
 def power_down():
     os.system('systemctl poweroff') 
