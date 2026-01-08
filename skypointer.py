@@ -123,14 +123,14 @@ def power_down():
     alt_motor.microstep = 1
     az_motor.microstep = 1
 
-    for i in range(3000):
+    for i in range(1000):
         alt_motor.step()
         az_motor.step()
         time.sleep(0.0005)
         alt_motor.reversed = not alt_motor.reversed
         az_motor.reversed = not az_motor.reversed
-        if i %1000 == 0:
-            time.sleep(0.5)
+        if i %250 == 0:
+            time.sleep(0.3)
     
     os.system('systemctl poweroff') 
 
@@ -211,7 +211,7 @@ def tracking():
     current_az = target_az.degrees
     print(f'Current Altitude: {current_alt}')
     print(f'Current Azimuth: {current_az}')
-    time.sleep(1)
+    time.sleep(0.5)
 
 def stop_tracking():
     global current_alt
