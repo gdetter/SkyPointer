@@ -170,8 +170,8 @@ def start_tracking():
     az_thread.start()
     alt_thread.join()
     az_thread.join()
-    current_alt = target_alt
-    current_az = target_az
+    current_alt = target_alt.degrees
+    current_az = target_az.degrees
     current_state = state.TRACKING
 
 def tracking():
@@ -183,17 +183,16 @@ def tracking():
     difference = iss - me
     topocentric = difference.at(t)
     target_alt, target_az, target_distance = topocentric.altaz()
-    alt_delta = target_alt.degrees-current_alt
-    az_delta = target_az.degrees-current_az
-
+    alt_delta = target_alt.degrees - current_alt
+    az_delta = target_az.degrees - current_az
     alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
     az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
     alt_thread.start()
     az_thread.start()
     alt_thread.join()
     az_thread.join()
-    current_alt = target_alt
-    current_az = target_az
+    current_alt = target_alt.degrees
+    current_az = target_az.degrees
 
 def stop_tracking():
     global current_alt
