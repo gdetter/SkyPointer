@@ -113,6 +113,7 @@ def button_callback():
             elif current_state == state.TRACKING:
                 print('Stopping...')
                 current_state = state.STOPPING
+        button_start = None
         button_pressed = False
 
 def power_down():
