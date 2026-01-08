@@ -102,6 +102,8 @@ def button_callback():
         if delta > 10000000000:
             print('Long Press')
             current_state = state.POWERING_DOWN
+        elif delta > 3000000000:
+            print('Long Press')
         button_pressed = False
 
 def power_down():
@@ -149,7 +151,7 @@ while True:
         case state.TRACKING:
             pass
         case state.POWERING_DOWN:
-            pass
+            power_down()
 
 
 
