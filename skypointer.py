@@ -123,12 +123,14 @@ def power_down():
     alt_motor.microstep = 1
     az_motor.microstep = 1
 
-    for i in range(1000):
+    for i in range(3000):
         alt_motor.step()
         az_motor.step()
-        time.sleep(0.001)
+        time.sleep(0.0005)
         alt_motor.reversed = not alt_motor.reversed
         az_motor.reversed = not az_motor.reversed
+        if i %1000 == 0:
+            time.sleep(0.5)
     
     os.system('systemctl poweroff') 
 
