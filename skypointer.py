@@ -84,9 +84,11 @@ def download_sats():
         load.download(url, filename=name)
 
 def button_pressed_callback():
+    print('Button Pressed')
     button_start = time.perf_counter_ns
 
 def button_released_callback():
+    print('Button Released')
     now = time.perf_counter_ns
     delta = now-button_start
     if delta > 10000000000:
