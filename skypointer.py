@@ -61,6 +61,7 @@ ts = None
 iss = None
 me = None
 
+button_pressed = False
 button_start = None
 
 
@@ -83,10 +84,22 @@ def download_sats():
     if not load.exists(name) or load.days_old(name) >= max_days:
         load.download(url, filename=name)
 
-def button_pressed_callback():
-    print('Button Pressed')
+def button_callback():
+    global button_pressed
     global button_start
-    button_start = time.perf_counter_ns
+
+    if not button_pressed:
+        print('Button Pressed')
+        button_pressed = True
+        button_start = time.perf_counter_ns
+    else:
+        print('Button Released')
+        now = time.perf_counter_ns
+        delta = now-button_start
+        if delta > 10000000000:
+            print('Long Press')
+            current_state = state.POWERING_DOWN
+        button_pressed = False
 
 def button_released_callback():
     print('Button Released')
@@ -113,8 +126,7 @@ def initialize():
     wiringpi.wiringPiSetup()
     wiringpi.pinMode(BUTTON_PIN, wiringpi.GPIO.INPUT)
     wiringpi.pullUpDnControl(BUTTON_PIN, wiringpi.GPIO.PUD_UP)
-    wiringpi.wiringPiISR(BUTTON_PIN, wiringpi.GPIO.INT_EDGE_FALLING, button_pressed_callback)
-    wiringpi.wiringPiISR(BUTTON_PIN, wiringpi.GPIO.INT_EDGE_RISING, button_released_callback)
+    wiringpi.wiringPiISR(BUTTON_PIN, wiringpi.GPIO.INT_EDGE_BOTH, button_callback)
 
     #Get current location
     my_lat, my_lon = get_lat_lon()
