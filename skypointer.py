@@ -107,10 +107,10 @@ def button_callback():
             print('Short Press')
             if current_state == state.DISABLED:
                 print('Starting...')
-                current_state == state.STARTING
+                current_state = state.STARTING
             elif current_state == state.TRACKING:
                 print('Stopping...')
-                current_state == state.STOPPING
+                current_state = state.STOPPING
         button_pressed = False
 
 def power_down():
@@ -171,7 +171,7 @@ def start_tracking():
     current_alt = target_alt
     current_az = target_az
     current_state = state.TRACKING
-    
+
 def stop_tracking():
     global current_alt
     global current_az
