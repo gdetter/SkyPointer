@@ -85,10 +85,13 @@ def download_sats():
 
 def button_pressed_callback():
     print('Button Pressed')
+    global button_start
     button_start = time.perf_counter_ns
 
 def button_released_callback():
     print('Button Released')
+    global button_start
+    global current_state
     if button_start is not None:
         now = time.perf_counter_ns
         delta = now-button_start
@@ -101,6 +104,9 @@ def power_down():
     os.system('systemctl poweroff') 
 
 def initialize():
+    global iss
+    global me
+    global current_state
     print('Initializing...')
 
     #Configure Button
