@@ -123,7 +123,7 @@ def power_down():
     alt_motor.microstep = 1
     az_motor.microstep = 1
 
-    for i in range(1000):
+    for i in range(750):
         alt_motor.step()
         az_motor.step()
         time.sleep(0.0005)
@@ -161,6 +161,20 @@ def initialize():
     print('Loaded', len(sats), 'satellites')
     by_name = {sat.name: sat for sat in sats}
     iss = by_name['ISS (ZARYA)']
+    alt_motor.enabled = True
+    az_motor.enabled = True
+    alt_motor.microstep = 1
+    az_motor.microstep = 1
+    for i in range(250):
+        alt_motor.step()
+        az_motor.step()
+        time.sleep(0.0005)
+        alt_motor.reversed = not alt_motor.reversed
+        az_motor.reversed = not az_motor.reversed
+    alt_motor.microstep = 16
+    az_motor.microstep = 16
+    alt_motor.enabled = False
+    az_motor.enabled = False
     print('Waiting...')
     current_state = state.DISABLED
 
