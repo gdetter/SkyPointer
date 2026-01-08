@@ -233,7 +233,6 @@ def stop_tracking():
     az_motor.enabled = False
     current_state = state.DISABLED
 
-
 while True:
     match current_state:
         case state.INITIALIZING:
@@ -248,36 +247,3 @@ while True:
             tracking()
         case state.POWERING_DOWN:
             power_down()
-
-
-
-
-
-#Enable Steppers
-alt_motor.enabled = True
-az_motor.enabled = True
-while True:
-    
-    while started:
-        t = ts.now()
-        difference = iss - me
-        topocentric = difference.at(t)
-        target_alt, target_az, target_distance = topocentric.altaz()
-        # astrometric = me.at(t).observe(mars)
-        # target_alt, target_az, d = astrometric.apparent().altaz()
-        print(f'Target Altitude: {target_alt.degrees}')
-        print(f'Target Azimuth: {target_az.degrees}')
-        alt_delta = target_alt.degrees-current_alt
-        az_delta = target_az.degrees-current_az
-
-        alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
-        az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
-        alt_thread.start()
-        az_thread.start()
-        alt_thread.join()
-        az_thread.join()
-    
-        current_alt = current_alt + alt_delta
-        current_az = current_az + az_delta
-        time.sleep(1)
-    
