@@ -140,7 +140,7 @@ while True:
         case state.DISABLED:
             alt_motor.enabled = False
             az_motor.enabled = False
-            print('Disabled')
+            # print('Disabled')
         case state.STARTING:
             pass
         case state.TRACKING:
