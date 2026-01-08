@@ -207,6 +207,9 @@ def tracking():
     az_thread.join()
     current_alt = target_alt.degrees
     current_az = target_az.degrees
+    print(f'Current Altitude: {current_alt}')
+    print(f'Current Azimuth: {current_az}')
+    time.sleep(1)
 
 def stop_tracking():
     global current_alt
