@@ -248,6 +248,8 @@ def start_tracking():
     #Handle az wraparound
     if current_az > 360:
         current_az -= 360
+    elif current_az < 0:
+        current_az += 360
 
     current_state = state.TRACKING
 
@@ -290,6 +292,8 @@ def tracking():
     #Handle az wraparound
     if current_az > 360:
         current_az -= 360
+    elif current_az < 0:
+        current_az += 360
 
     print(f'Current Altitude: {current_alt}')
     print(f'Current Azimuth: {current_az}')
