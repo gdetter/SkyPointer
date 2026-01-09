@@ -194,10 +194,10 @@ def start_tracking():
     target_alt, target_az, target_distance = topocentric.altaz()
     alt_delta = target_alt.degrees-current_alt
     az_delta = target_az.degrees-current_az
-    
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        alt_future = executor.submit(alt_motor.rotate_degrees,kwargs={'angle':alt_delta})
-        az_future = executor.submit(az_motor.rotate_degrees,kwargs={'angle':az_delta})
+        alt_future = executor.submit(alt_motor.rotate_degrees,alt_delta)
+        az_future = executor.submit(az_motor.rotate_degrees,az_delta)
         alt_degs = alt_future.result()
         az_degs = az_future.result()
     
