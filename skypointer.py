@@ -192,10 +192,8 @@ def start_tracking():
     difference = iss - me
     topocentric = difference.at(t)
     target_alt, target_az, target_distance = topocentric.altaz()
-    print(target_az)
     alt_delta = target_alt.degrees-current_alt
     az_delta = target_az.degrees-current_az
-    print(target_az)
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         alt_future = executor.submit(alt_motor.rotate_degrees_by_time,alt_delta, 10)
@@ -237,12 +235,10 @@ def stop_tracking():
     target_az = 0
     alt_delta = target_alt-current_alt
     az_delta = target_az-current_az
-    alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
-    az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
-    alt_thread.start()
-    az_thread.start()
-    alt_thread.join()
-    az_thread.join()
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        executor.submit(alt_motor.rotate_degrees_by_time,alt_delta, 10)
+        executor.submit(az_motor.rotate_degrees_by_time,az_delta, 10)
     current_alt = target_alt
     current_az = target_az
     alt_motor.enabled = False
