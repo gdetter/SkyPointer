@@ -227,7 +227,7 @@ def tracking():
     current_az = current_az+az_degs
     print(f'Current Altitude: {current_alt}')
     print(f'Current Azimuth: {current_az}')
-    time.sleep(0.1)
+    time.sleep(10)
 
 def stop_tracking():
     global current_alt
