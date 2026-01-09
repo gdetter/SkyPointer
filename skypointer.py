@@ -240,9 +240,15 @@ def start_tracking():
         alt_degs = alt_future.result()
         az_degs = az_future.result()
     
-    #Update location based on steps traveled and handle wrap around
-    current_alt = (current_alt+alt_degs) % 360
-    current_az = (current_az+az_degs) %360
+    
+    #Update location based on steps traveled
+    current_alt = (current_alt+alt_degs)
+    current_az = (current_az+az_degs)
+
+    #Handle az wraparound
+    if current_az > 360:
+        current_az -= 360
+
     current_state = state.TRACKING
 
 #Track ISS
@@ -277,9 +283,14 @@ def tracking():
         alt_degs = alt_future.result()
         az_degs = az_future.result()
 
-    #Update location based on steps traveled and handle wrap around
-    current_alt = (current_alt+alt_degs) % 360
-    current_az = (current_az+az_degs) %360
+    #Update location based on steps traveled
+    current_alt = (current_alt+alt_degs)
+    current_az = (current_az+az_degs)
+
+    #Handle az wraparound
+    if current_az > 360:
+        current_az -= 360
+
     print(f'Current Altitude: {current_alt}')
     print(f'Current Azimuth: {current_az}')
     time.sleep(1)
