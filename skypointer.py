@@ -10,6 +10,7 @@ import threading
 from enum import Enum, auto
 import wiringpi
 from wiringpi import GPIO
+import concurrent.futures
 
 class state(Enum):
     INITIALIZING = auto()
@@ -193,15 +194,21 @@ def start_tracking():
     target_alt, target_az, target_distance = topocentric.altaz()
     alt_delta = target_alt.degrees-current_alt
     az_delta = target_az.degrees-current_az
-
-    alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
-    az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
-    alt_thread.start()
-    az_thread.start()
-    alt_thread.join()
-    az_thread.join()
-    current_alt = target_alt.degrees
-    current_az = target_az.degrees
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        alt_future = executor.submit(alt_motor.rotate_degrees,kwargs={'angle':alt_delta})
+        az_future = executor.submit(az_motor.rotate_degrees,kwargs={'angle':az_delta})
+        alt_degs = alt_future.result()
+        az_degs = az_future.result()
+    
+    # alt_thread = threading.Thread(target=alt_motor.rotate_degrees, kwargs={'angle':alt_delta})
+    # az_thread = threading.Thread(target=az_motor.rotate_degrees, kwargs={'angle':az_delta})
+    # alt_thread.start()
+    # az_thread.start()
+    # alt_thread.join()
+    # az_thread.join()
+    current_alt = current_alt+alt_degs
+    current_az = current_az+az_degs
     current_state = state.TRACKING
 
 def tracking():
@@ -261,3 +268,4 @@ while True:
             tracking()
         case state.POWERING_DOWN:
             power_down()
+
