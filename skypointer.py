@@ -53,7 +53,7 @@ alt_motor.reversed = True
 az_motor.ratio = 3.6
 az_motor.microstep = 16
 az_motor.speed = 20
-alt_motor.reversed = True
+az_motor.reversed = True
 alt_motor.enabled = False
 az_motor.enabled = False
 
@@ -192,12 +192,14 @@ def start_tracking():
     difference = iss - me
     topocentric = difference.at(t)
     target_alt, target_az, target_distance = topocentric.altaz()
+    print(target_az)
     alt_delta = target_alt.degrees-current_alt
     az_delta = target_az.degrees-current_az
+    print(target_az)
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        alt_future = executor.submit(alt_motor.rotate_degrees_by_time,alt_delta, 5)
-        az_future = executor.submit(az_motor.rotate_degrees_by_time,az_delta, 5)
+        alt_future = executor.submit(alt_motor.rotate_degrees_by_time,alt_delta, 10)
+        az_future = executor.submit(az_motor.rotate_degrees_by_time,az_delta, 10)
         alt_degs = alt_future.result()
         az_degs = az_future.result()
     
