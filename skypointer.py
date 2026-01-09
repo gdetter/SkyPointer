@@ -220,14 +220,29 @@ def start_tracking():
     alt_delta = target_alt.degrees-current_alt
     az_delta = target_az.degrees-current_az
 
+    #Take shortest path
+    if abs(alt_delta) > 180:  #This will never happen range is -90 to 90
+        if alt_delta > 0:
+            alt_delta = alt_delta - 360
+        else:
+            alt_delta = alt_delta + 360
+    
+    if abs(az_delta) > 180:
+        if az_delta > 0:
+            az_delta = az_delta - 360
+        else:
+            az_delta = az_delta + 360
+    
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
         alt_future = executor.submit(alt_motor.rotate_degrees_by_time,alt_delta, 10)
         az_future = executor.submit(az_motor.rotate_degrees_by_time,az_delta, 10)
         alt_degs = alt_future.result()
         az_degs = az_future.result()
     
-    current_alt = current_alt+alt_degs
-    current_az = current_az+az_degs
+    #Update location based on steps traveled and handle wrap around
+    current_alt = (current_alt+alt_degs) % 360
+    current_az = (current_az+az_degs) %360
     current_state = state.TRACKING
 
 #Track ISS
@@ -242,13 +257,29 @@ def tracking():
     target_alt, target_az, target_distance = topocentric.altaz()
     alt_delta = target_alt.degrees - current_alt
     az_delta = target_az.degrees - current_az
+
+    #Take shortest path
+    if abs(alt_delta) > 180:  #This will never happen range is -90 to 90
+        if alt_delta > 0:
+            alt_delta = alt_delta - 360
+        else:
+            alt_delta = alt_delta + 360
+    
+    if abs(az_delta) > 180:
+        if az_delta > 0:
+            az_delta = az_delta - 360
+        else:
+            az_delta = az_delta + 360
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
         alt_future = executor.submit(alt_motor.rotate_degrees,alt_delta)
         az_future = executor.submit(az_motor.rotate_degrees,az_delta)
         alt_degs = alt_future.result()
         az_degs = az_future.result()
-    current_alt = current_alt+alt_degs
-    current_az = current_az+az_degs
+
+    #Update location based on steps traveled and handle wrap around
+    current_alt = (current_alt+alt_degs) % 360
+    current_az = (current_az+az_degs) %360
     print(f'Current Altitude: {current_alt}')
     print(f'Current Azimuth: {current_az}')
     time.sleep(1)
@@ -262,6 +293,19 @@ def stop_tracking():
     target_az = 0
     alt_delta = target_alt-current_alt
     az_delta = target_az-current_az
+
+    #Take shortest path
+    if abs(alt_delta) > 180:  #This will never happen range is -90 to 90
+        if alt_delta > 0:
+            alt_delta = alt_delta - 360
+        else:
+            alt_delta = alt_delta + 360
+    
+    if abs(az_delta) > 180:
+        if az_delta > 0:
+            az_delta = az_delta - 360
+        else:
+            az_delta = az_delta + 360
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.submit(alt_motor.rotate_degrees_by_time,alt_delta, 10)
