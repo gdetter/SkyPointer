@@ -5,12 +5,11 @@ from skyfield.api import N, S, E, W, wgs84, EarthSatellite, load
 import csv
 import time
 from stepper import StepperDriver
-import time
-import threading
 from enum import Enum, auto
 import wiringpi
-from wiringpi import GPIO
 import concurrent.futures
+
+#TODO Make this whole thing a class and clean up bad practices
 
 class state(Enum):
     INITIALIZING = auto()
@@ -72,22 +71,42 @@ button_start = None
 #Initialize State
 current_state = state.INITIALIZING
 
+#Get IP address, return none if not found
 def get_my_ip():
-    external_ip = urllib.request.urlopen('https://api.ipify.org').read().decode('utf8')
-    return(external_ip)
-
+    external_ip = None
+    try:
+        external_ip = urllib.request.urlopen('https://api.ipify.org').read().decode('utf8')
+    except:
+        print('Error getting IP!')
+        return None
+    else:
+        return(external_ip)
+    
+#Get coordinates, return Fikst if not found
 def get_lat_lon():
-    g = geocoder.ipinfo(get_my_ip())
-    return g.latlng
+    try:
+        g = geocoder.ipinfo(get_my_ip())
+    except:
+        print('Error getting coordinates by IP!')
+        print('Defaulting to Fikst')
+        return 42.58973137995996, -71.15517149264241
+    else:
+        return g.latlng
 
+#Download list of satellites
 def download_sats():
     max_days = 7.0         # download again once 7 days old
     name = 'stations.csv'  # custom filename, not 'gp.php'
     base = 'https://celestrak.org/NORAD/elements/gp.php'
     url = base + '?GROUP=stations&FORMAT=csv'
     if not load.exists(name) or load.days_old(name) >= max_days:
-        load.download(url, filename=name)
+        try:
+            load.download(url, filename=name)
+        except:
+            print('Error downloading sats!')
+            print('Accuracy not garunteed.')
 
+#Handle long and short press behavior
 def button_callback():
     global button_pressed
     global button_start
@@ -117,6 +136,7 @@ def button_callback():
         button_start = None
         button_pressed = False
 
+#Shut down the skypointer
 def power_down():
 
     alt_motor.enabled = True
@@ -135,6 +155,7 @@ def power_down():
     
     os.system('systemctl poweroff') 
 
+#Set up after initial power on
 def initialize():
     global iss
     global me
@@ -162,6 +183,8 @@ def initialize():
     print('Loaded', len(sats), 'satellites')
     by_name = {sat.name: sat for sat in sats}
     iss = by_name['ISS (ZARYA)']
+
+    #Beep once to indicate initialized
     alt_motor.enabled = True
     az_motor.enabled = True
     alt_motor.microstep = 1
@@ -176,9 +199,11 @@ def initialize():
     az_motor.microstep = 16
     alt_motor.enabled = False
     az_motor.enabled = False
+
     print('Waiting...')
     current_state = state.DISABLED
 
+#Move synchronously to ISS
 def start_tracking():
     global iss
     global me
@@ -205,6 +230,7 @@ def start_tracking():
     current_az = current_az+az_degs
     current_state = state.TRACKING
 
+#Track ISS
 def tracking():
     global iss
     global me
@@ -227,6 +253,7 @@ def tracking():
     print(f'Current Azimuth: {current_az}')
     time.sleep(1)
 
+#Return to -90, 0 synchronously and disable steppers
 def stop_tracking():
     global current_alt
     global current_az
@@ -245,6 +272,7 @@ def stop_tracking():
     az_motor.enabled = False
     current_state = state.DISABLED
 
+#Manage the states
 while True:
     match current_state:
         case state.INITIALIZING:
